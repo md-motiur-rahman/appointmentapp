@@ -63,11 +63,14 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username });
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
     const checkPass = await bcrypt.compare(password, user?.password || "");
-    if (!user || !checkPass) {
+    if (!user) {
       return res.status(400).json({ error: "Invalid username or password" });
+    }
+    if(!checkPass){
+      return res.status(400).json({error: "password missmatch"})
     }
     generateTokenAndSetCookie(user._id, res);
     return res.status(200).json({ data: user });
@@ -84,5 +87,14 @@ export const logout = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(400).json({ error: error.message });
+  }
+};
+
+export const getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(400).json({ success: false, error: error.message });
   }
 };

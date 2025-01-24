@@ -5,6 +5,7 @@ import connectDB from "./db/db.js";
 import authRouter from "./routes/auth.route.js";
 import bookingRouter from "./routes/booking.route.js";
 import slotRouter from "./routes/slot.route.js";
+import cors from "cors"
 
 const app = express();
 
@@ -12,6 +13,10 @@ dotenv.config();
 
 const port = process.env.PORT || 8000;
 
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}))
 app.use(express.json());
 app.use(cookieParser());
 
